@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/golang/glog"
 	"golang.org/x/text/width"
 )
 
@@ -70,6 +71,7 @@ func NewCell(v reflect.Value) (Cell, error) {
 		}
 	}
 	c.StringLength = n
+	glog.V(1).Infof("s: %s, len: %d", s, n)
 	return c, nil
 }
 
@@ -148,12 +150,12 @@ func (wr *Writer) flushRow(row []Cell) error {
 		switch v := cell.Value.(type) {
 		case int64, uint64:
 			if c.IntAsFloat {
-				s = fmt.Sprintf("% "+strconv.Itoa(c.Length)+".6f", v)
+				s = fmt.Sprintf("%"+strconv.Itoa(c.Length)+".6f", v)
 			} else {
-				s = fmt.Sprintf("% "+strconv.Itoa(c.Length)+"d", v)
+				s = fmt.Sprintf("%"+strconv.Itoa(c.Length)+"d", v)
 			}
 		case float64:
-			s = fmt.Sprintf("% "+strconv.Itoa(c.Length)+".6f", v)
+			s = fmt.Sprintf("%"+strconv.Itoa(c.Length)+".6f", v)
 		case string:
 			printLength := c.Length
 			ra := []rune(v)
@@ -165,6 +167,7 @@ func (wr *Writer) flushRow(row []Cell) error {
 				}
 			}
 			s = fmt.Sprintf("%-"+strconv.Itoa(printLength)+"s", v)
+			glog.V(1).Infof("s: %s, plen: %d", s, printLength)
 		}
 		items[i] = s
 
